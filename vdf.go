@@ -23,6 +23,9 @@ func ParseUtf8(reader io.Reader) map[string]interface{} {
 
 	var r rune
 	var err error
+
+	var kvl int
+	var kv []rune // buffer
 	for {
 		r, _, err = br.ReadRune()
 
@@ -39,19 +42,19 @@ func ParseUtf8(reader io.Reader) map[string]interface{} {
 			if k {
 				km = append(km, KeyMap{})
 			}
-			var c string
+			kv = kv[:0]
 			for {
 				r, _, _ = br.ReadRune()
-				cl := len(c)
-				if r == '"' && (cl == 0 || c[cl-1] != '\\') {
+				kvl = len(kv)
+				if r == '"' && (kvl == 0 || kv[kvl-1] != '\\') {
 					break
 				}
-				c += string(r)
+				kv = append(kv, r)
 			}
 			if k {
-				km[l].k = c
+				km[l].k = string(kv)
 			} else {
-				km[l-1].m[km[l].k] = c
+				km[l-1].m[km[l].k] = string(kv)
 				km = km[:l]
 			}
 			l--
@@ -91,6 +94,9 @@ func ParseUtf16(reader io.Reader) map[string]interface{} {
 	var r rune
 	var r2 rune
 	var err error
+
+	var kvl int
+	var kv []rune // buffer
 	for {
 		r, _, _ = br.ReadRune()
 		r2, _, err = br.ReadRune()
@@ -108,20 +114,20 @@ func ParseUtf16(reader io.Reader) map[string]interface{} {
 			if k {
 				km = append(km, KeyMap{})
 			}
-			var c string
+			kv = kv[:0]
 			for {
 				r, _, _ = br.ReadRune()
 				r2, _, _ = br.ReadRune()
-				cl := len(c)
-				if r == '"' && r2 == 0 && (cl == 0 || c[cl-1] != '\\') {
+				kvl = len(kv)
+				if r == '"' && r2 == 0 && (kvl == 0 || kv[kvl-1] != '\\') {
 					break
 				}
-				c += string(r)
+				kv = append(kv, r)
 			}
 			if k {
-				km[l].k = strings.ToLower(c)
+				km[l].k = strings.ToLower(string(kv))
 			} else {
-				km[l-1].m[km[l].k] = c
+				km[l-1].m[km[l].k] = string(kv)
 				km = km[:l]
 			}
 			l--
