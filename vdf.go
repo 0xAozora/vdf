@@ -43,7 +43,7 @@ func ParseUtf8(reader io.Reader) map[string]interface{} {
 			for {
 				r, _, _ = br.ReadRune()
 				cl := len(c)
-				if r == '"' && cl != 0 && c[cl-1] != '\\' {
+				if r == '"' && (cl == 0 || c[cl-1] != '\\') {
 					break
 				}
 				c += string(r)
