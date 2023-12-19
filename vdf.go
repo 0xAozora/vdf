@@ -3,7 +3,6 @@ package vdf
 import (
 	"bufio"
 	"io"
-	"log"
 	"strings"
 )
 
@@ -12,7 +11,7 @@ type KeyMap struct {
 	m map[string]interface{}
 }
 
-func ParseUtf8(reader io.Reader) map[string]interface{} {
+func ParseUtf8(reader io.Reader) (map[string]interface{}, error) {
 
 	br := bufio.NewReader(reader)
 
@@ -33,7 +32,7 @@ func ParseUtf8(reader io.Reader) map[string]interface{} {
 			if err == io.EOF {
 				break
 			} else {
-				log.Fatal(err)
+				return nil, err
 			}
 		}
 
@@ -79,10 +78,10 @@ func ParseUtf8(reader io.Reader) map[string]interface{} {
 			l--
 		}
 	}
-	return m
+	return m, nil
 }
 
-func ParseUtf16(reader io.Reader) map[string]interface{} {
+func ParseUtf16(reader io.Reader) (map[string]interface{}, error) {
 
 	br := bufio.NewReader(reader)
 
@@ -105,7 +104,7 @@ func ParseUtf16(reader io.Reader) map[string]interface{} {
 			if err == io.EOF {
 				break
 			} else {
-				log.Fatal(err)
+				return nil, err
 			}
 		}
 
@@ -163,5 +162,5 @@ func ParseUtf16(reader io.Reader) map[string]interface{} {
 		}
 	}
 
-	return m
+	return m, nil
 }
